@@ -16,5 +16,5 @@ class IRIS_Model_Predict(APIView):
             keys.append(key)
             values.append(data[key])
         
-        response_dict = {"Predicted Iris Species": True}
+        response_dict = {"Predicted Iris Species": 1}
         return Response(response_dict, status=200)

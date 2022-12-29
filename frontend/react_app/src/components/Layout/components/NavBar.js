@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '@/features/auth';
+import { logout, getUser } from '@/features/auth';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const authedSettings = ['Profile', 'Account', 'Settings', 'Logout'];
@@ -45,7 +45,7 @@ export const NavBar = (props) => {
   const navigate = useNavigate();
 
   const authMenu = [
-      <MenuItem key="Profile" onClick={handleProfileRequest}>
+      <MenuItem key="Profile" onClick={() => dispatch(getUser())}>
         <Typography>Profile</Typography>
       </MenuItem>,
       <MenuItem key="Account" onClick={handleAccountRequest}>

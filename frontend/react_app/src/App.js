@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { Provider } from 'react-redux';
 import { store } from './store';
+import { AuthProvider } from './features/auth';
 
 import { publicRoutes } from './routes';
 import { protectedRoutes } from './routes';
@@ -15,17 +16,21 @@ const darkTheme = createTheme({
   },
 });
 
-function App(props) {
+function App() {
   const router = createBrowserRouter([
     ...publicRoutes,
     ...protectedRoutes
   ]);
 
+  
+
   return (
     <Provider store={store}>
-      <ThemeProvider theme={darkTheme}>
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider theme={darkTheme}>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </AuthProvider>
     </Provider>
   )
 }

@@ -19,13 +19,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, resetRegistered } from './userSlice';
 
 
-export const Login = (props) => {
+export const Login = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector(state => state.user);
-  
+
+  let navigate = useNavigate();
+  let location = useLocation();
+  let { from } = location.state || { from: { pathname: "/" } };
+
   useEffect(() => {
     dispatch(resetRegistered());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) { 
+      navigate(from); 
+    };
+  }, [isAuthenticated, navigate, from]);
+
 
   const [email, setEmail] = React.useState(null);
   const [password, setPassword] = React.useState(null);
@@ -43,13 +54,6 @@ export const Login = (props) => {
     dispatch(login({email, password}));
   };
 
-  let navigate = useNavigate();
-  let location = useLocation();
-  let { from } = location.state || { from: { pathname: "/" } };
-
-  React.useEffect(() => {
-    if (isAuthenticated) { navigate(from) };
-  });
 
   return (
     <Container component="main" maxWidth="xs">

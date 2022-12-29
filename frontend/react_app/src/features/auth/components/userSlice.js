@@ -5,16 +5,17 @@ import Cookies from 'js-cookie';
 
 
 const getCSRFToken = async () => {
+    console.log('getting csrf');
     try {
         await axios.get('/api/users/get-csrf/');
     } catch (err) {
-        
+        // console.log('csrf error');
     }
 };
 
 export const register = createAsyncThunk(
     'users/register',
-    async ({body}, thunkAPI) => {
+    async (body, thunkAPI) => {
         // const body = JSON.stringify({
         //     first_name,
         //     last_name,
@@ -22,11 +23,8 @@ export const register = createAsyncThunk(
         //     password
         // });
 
-        await getCSRFToken();
         try {
-            const res = await axios.post('/api/users/register/', body, {
-              headers: { 'Content-Type': 'application/json'}
-            });
+            const res = await axios.post('/api/users/register/', body);
       
             const data = res.data;
 
@@ -51,10 +49,9 @@ export const login = createAsyncThunk(
         //     password
         // });
 
-        await getCSRFToken();
         try {
             const res = await axios.post('/api/users/login/', body, {
-                // withCredentials: true
+                withCredentials: true
             });
       
             const data = res.data;
@@ -70,7 +67,6 @@ export const login = createAsyncThunk(
             }
           } 
           catch (err) {
-              console.log(err);
               return thunkAPI.rejectWithValue(err.response.data);
           }
     }
@@ -80,9 +76,9 @@ export const logout = createAsyncThunk(
     'users/logout',
     async (_, thunkAPI) => {
 
-        await getCSRFToken();
+        console.log(Cookies.get());
         try {
-            const res = await axios.post('/api/users/logout/', {
+            const res = await axios.post('/api/users/logout/', _, {
                 withCredentials: true
             });
       
@@ -96,17 +92,46 @@ export const logout = createAsyncThunk(
             }
           } 
           catch (err) {
-              console.log(err);
+              console.log(err.response.data);
               return thunkAPI.rejectWithValue(err.response.data);
           }
     }
 );
 
-const getUser = createAsyncThunk(
+
+export const checkAuth = createAsyncThunk(
+    'users/checkAuth',
+    async (_, thunkAPI) => {
+        try {
+            const res = await axios.get('/api/users/check-auth/', {
+                withCredentials: true
+            });
+      
+            const data = res.data;
+
+            if (res.status === 200) {
+                const { dispatch } = thunkAPI;
+                dispatch(getUser());
+
+                return data;
+            }
+            else {
+                getCSRFToken();
+                return thunkAPI.rejectWithValue(data);
+            }
+          } 
+          catch (err) {
+                getCSRFToken();
+                return thunkAPI.rejectWithValue(err.response.data);
+          }
+    }
+);
+
+
+export const getUser = createAsyncThunk(
     'users/me',
     async (_, thunkAPI) => {
 
-        // await getCSRFToken();
         try {
             const res = await axios.get('/api/users/me/', {
                 withCredentials: true
@@ -130,8 +155,9 @@ const getUser = createAsyncThunk(
 const initialState = {
     isAuthenticated: false,
     user: null,
-    loading: false,
+    loading: true,
     registered: false,
+    errors: null,
 }
 
 const userSlice = createSlice({
@@ -147,24 +173,29 @@ const userSlice = createSlice({
         builder
             .addCase(register.pending, state => {
                 state.loading = true;
+                state.errors = null;
             })
             .addCase(register.fulfilled, state => {
                 state.registered = true;
                 state.loading = false;
+                state.errors = null;
             })
-            .addCase(register.rejected, state => {
-                // TODO: add error message state
+            .addCase(register.rejected, (state, action) => {
                 state.loading = false;
+                state.errors = action.payload;
             })
             .addCase(login.pending, state => {
                 state.loading = true;
+                state.errors = null;
             })
             .addCase(login.fulfilled, state => {
                 state.loading = false;
                 state.isAuthenticated = true;
+                state.errors = null;
             })
-            .addCase(login.rejected, state => {
+            .addCase(login.rejected, (state, action) => {
                 state.loading = false;
+                state.errors = action.payload;
             })
             .addCase(getUser.pending, state => {
                 state.loading = true;
@@ -178,13 +209,25 @@ const userSlice = createSlice({
             })
             .addCase(logout.pending, state => {
                 state.loading = true;
+                state.errors = null;
             })
             .addCase(logout.fulfilled, state => {
                 state.loading = false;
                 state.isAuthenticated = false;
                 state.user = null;
+                state.errors = null;
             })
             .addCase(logout.rejected, state => {
+                state.loading = false;
+            })
+            .addCase(checkAuth.pending, state => {
+                state.loading = true;
+            })
+            .addCase(checkAuth.fulfilled, state => {
+                state.loading = false;
+                state.isAuthenticated = true;
+            })
+            .addCase(checkAuth.rejected, state => {
                 state.loading = false;
             })
     }

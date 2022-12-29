@@ -59,11 +59,11 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'users.UserAccount'
 
-# CSRF_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_SAMESITE = 'Strict'
 SESSION_COOKIE_SAMESITE = 'Strict'
 # CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_HTTPONLY = True
-CSRF_USE_SESSIONS = True
+# CSRF_USE_SESSIONS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

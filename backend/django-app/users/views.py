@@ -1,6 +1,7 @@
+import re
 from dj_rest_auth.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils.decorators import method_decorator
 
 from django.contrib.auth import login, logout, authenticate
@@ -19,28 +20,41 @@ class GetCSRFToken(APIView):
         return Response({'success': 'CSRF token set'})
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class LoginView(APIView):
     def post(self, request):
         data = request.data
         email = data['email']
         password = data['password']
 
-        user = authenticate(username=email, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is not None:
             login(request, user)
-            return Response({'success': 'User authenticated'})
+            return Response({'success': 'User authenticated'}, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid credentials'})
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, format=None):
         try:
             logout(request)
-            return Response({"success": "Logged out successfully"})
+            return Response({"success": "Logged out successfully"}, status=status.HTTP_200_OK)
         except:
-            return Response({'error': 'Something went wrong while logging out'})
+            return Response({'error': 'Something went wrong while logging out'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class CheckAuthenticatedView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return Response({'isAuthenticated': 'true'}, status=status.HTTP_200_OK)
+        return Response({'isAuthenticated': 'false'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 class RegisterView(APIView):

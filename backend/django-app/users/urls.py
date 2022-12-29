@@ -1,8 +1,11 @@
-from django.urls import path, include
+from django.urls import path
 
-from users.views import APILoginView, APILogoutView, APIPasswordUpdateView
+from .views import RegisterView, RetrieveUserView, GetCSRFToken, LoginView, LogoutView
+
 urlpatterns = [
-    path('login/', APILoginView.as_view(), name='api_login'),
-    path('logout/', APILogoutView.as_view(), name='api_logout'),
-    path('update_password/', APIPasswordUpdateView.as_view(), name='api_update_password'),
+    path('register/', RegisterView.as_view(), name='api_register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('me/', RetrieveUserView.as_view(), name='current-user'),
+    path('get-csrf/', GetCSRFToken.as_view(), name='get-csrf-token'),
 ]

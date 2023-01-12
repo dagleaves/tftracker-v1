@@ -1,5 +1,4 @@
-import re
-from dj_rest_auth.views import APIView
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils.decorators import method_decorator
@@ -13,15 +12,17 @@ from .serializers import UserRegistrationSerializer, UserSerializer
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
-class GetCSRFToken(APIView):
+class GetCSRFTokenView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, format=None):
-        return Response({'success': 'CSRF token set'})
+        return Response({'success': 'CSRF token set.'}, status=status.HTTP_200_OK)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         data = request.data
         email = data['email']
@@ -31,9 +32,9 @@ class LoginView(APIView):
 
         if user is not None:
             login(request, user)
-            return Response({'success': 'User authenticated'}, status=status.HTTP_200_OK)
+            return Response({'success': 'User authenticated.'}, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -43,13 +44,15 @@ class LogoutView(APIView):
     def post(self, request, format=None):
         try:
             logout(request)
-            return Response({"success": "Logged out successfully"}, status=status.HTTP_200_OK)
+            return Response({"success": "Logged out successfully."}, status=status.HTTP_200_OK)
         except:
-            return Response({'error': 'Something went wrong while logging out'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'Something went wrong while logging out.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class CheckAuthenticatedView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         if request.user.is_authenticated:
             return Response({'isAuthenticated': 'true'}, status=status.HTTP_200_OK)
@@ -58,6 +61,8 @@ class CheckAuthenticatedView(APIView):
 
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         data = request.data
         serializer = UserRegistrationSerializer(data=data)

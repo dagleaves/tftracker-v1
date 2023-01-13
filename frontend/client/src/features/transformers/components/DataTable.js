@@ -1,168 +1,42 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { visuallyHidden } from '@mui/utils';
-import SearchBar from "material-ui-search-bar";
 
-import { useLoaderData, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { getTransformerPage } from '../hooks/getTransformerPage';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { updateSearchFilters, search } from './searchSlice';
 
-const headCells = [
-  {
-    id: 'name',
-    numeric: false,
-    label: 'Name',
-  },
-  {
-    id: 'toyline',
-    numeric: false,
-    label: 'Toyline',
-  },
-  {
-    id: 'subline',
-    numeric: false,
-    label: 'Subline',
-  },
-  {
-    id: 'size_class',
-    numeric: false,
-    label: 'Size Class',
-  },
-  {
-    id: 'release_date',
-    numeric: false,
-    label: 'Release Date',
-  },
-  {
-    id: 'price',
-    numeric: false,
-    label: 'Price',
-  },
-  {
-    id: 'manufacturer',
-    numeric: false,
-    label: 'Manufacturer',
-  },
-  {
-    id: 'details',
-    numeric: false,
-    label: 'Details',
-  },
-];
+import { EnhancedTableHead } from './table/TableHeader';
+import { EnhancedTableToolbar } from './table/TableToolbar';
 
-const EnhancedTableHead = (props) => {
-  const {order, orderBy, onRequestSort } =
-    props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align='center'
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-};
-
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-};
-
-const EnhancedTableToolbar = React.forwardRef((props, filters) => {
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...({
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Search
-        </Typography>
-
-        <SearchBar 
-          value={filters.value.current.search}
-          onChange={(newValue) => {filters.value.current.search = newValue}}
-          
-        />
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-    </Toolbar>
-  );
-});
 
 export const DataTable = () => {
-  const pageData = useLoaderData();
+  const dispatch = useDispatch();
+
+  const { filters, loading, results } = useSelector(state => state.search);
+
+  React.useEffect(() => {
+    console.log('calling dispatch')
+    dispatch(search())
+  });
+
+  const pageData = results;
   const count = pageData['count'];
   const responseTime = pageData['response-time'];
   const initRows = pageData['results'];
   const initPrevURL = pageData['previous'];
   const initNextURL = pageData['next'];
 
-
-  const filters = React.useRef({
-    'search': '',
-    'toyline': '',
-    'subline': '',
-    'size_class': '',
-    'manufacturer': '',
-    'release_date': '',
-    'future_releases': '',
-    'price': ''
-  });
 
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('name');
@@ -171,6 +45,7 @@ export const DataTable = () => {
   const [rows, setRows] = React.useState(initRows);
   const [prevURL, setPrevURL] = React.useState(initPrevURL);
   const [nextURL, setNextURL] = React.useState(initNextURL);
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

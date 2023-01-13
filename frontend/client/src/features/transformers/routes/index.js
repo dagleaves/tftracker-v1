@@ -5,6 +5,9 @@ import { NotFound } from "@/features/misc";
 
 import { DataTable } from "../components/DataTable";
 
+import { useDispatch, useSelector } from "react-redux";
+import { search } from "../components/searchSlice";
+
 const getTransformer = async (slug) => {
     const id = slug.split('-')[0];
     try {
@@ -20,8 +23,6 @@ const getTransformer = async (slug) => {
         }
       } 
       catch (err) {
-        console.log('Error');
-        console.log(err);
         // TODO: Should probably replace with a meaningful error display
         throw new Error('Not found.')
       }
@@ -47,6 +48,7 @@ const getTransformerList = async () => {
       }
 };
 
+
 export const transformerRoutes = [
     {
         path: "transformers/:slug",
@@ -67,9 +69,6 @@ export const transformerRoutes = [
     {
         path: "search/",
         element: <DataTable />,
-        errorElement: <NotFound />,
-        loader: () => {
-            return getTransformerList();
-        }
+        errorElement: <NotFound />
     }
 ];

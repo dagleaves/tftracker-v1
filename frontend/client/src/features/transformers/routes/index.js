@@ -4,9 +4,7 @@ import axios from '@/api/axios';
 import { NotFound } from "@/features/misc";
 
 import { DataTable } from "../components/DataTable";
-
-import { useDispatch, useSelector } from "react-redux";
-import { search } from "../components/searchSlice";
+import { SearchProvider } from "../components/SearchProvider";
 
 const getTransformer = async (slug) => {
     const id = slug.split('-')[0];
@@ -68,7 +66,7 @@ export const transformerRoutes = [
     },
     {
         path: "search/",
-        element: <DataTable />,
+        element: <SearchProvider ><DataTable /></SearchProvider>,
         errorElement: <NotFound />
     }
 ];

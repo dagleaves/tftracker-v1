@@ -21,13 +21,6 @@ class TransformerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transformer
-        fields = ['picture', 'name', 'release_date', 'price', 'toyline', 'subline', 'size_class', 'manufacturer', 'description']
-
-
-class TransformerListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Transformer
         fields = ['id', 'name', 'release_date', 'price', 'toyline', 'subline', 'size_class', 'manufacturer']
 
 

@@ -2,16 +2,28 @@ import * as React from 'react';
 import { alpha } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import Button from '@mui/material/Button';
 import SearchBar from "@mkyy/mui-search-bar";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { search, updateSearchFilter, resetSearchState } from '@/features/transformers';
 
-export const EnhancedTableToolbar = React.forwardRef((props, filters) => {
 
-  const handleRequestSearch = async () => {
+export const EnhancedTableToolbar = () => {
+  const dispatch = useDispatch();
+  const { filters } = useSelector(state => state.search);
 
+  const onChange = (newValue) => {
+    dispatch(updateSearchFilter(newValue));
+  }
+
+  const handleRequestSearch = () => {
+    dispatch(search());
+  }
+
+  const handleReset = () => {
+    dispatch(resetSearchState());
+    dispatch(search());
   }
 
   return (
@@ -26,26 +38,22 @@ export const EnhancedTableToolbar = React.forwardRef((props, filters) => {
       }}
     >
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ mr: 3 }}
           variant="h6"
           id="tableTitle"
-          component="div"
+          onClick={handleReset}
+          component={Button}
         >
           Search
         </Typography>
 
-        {/* {filters !== null ? 
         <SearchBar 
-          value={filters.value.current.search}
-          onChange={newValue => console.log(newValue)}
-          onSearch={() => console.log('search')}
-        /> : null} */}
+          value={filters.search}
+          onChange={onChange}
+          onSearch={handleRequestSearch}
+          style={{ color: 'black' }}
+        />
         
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
     </Toolbar>
   );
-});
+};

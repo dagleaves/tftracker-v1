@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -45,11 +44,6 @@ const headCells = [
     numeric: false,
     label: 'Manufacturer',
   },
-  {
-    id: 'details',
-    numeric: false,
-    label: 'Details',
-  },
 ];
 
 export const EnhancedTableHead = (props) => {
@@ -82,6 +76,12 @@ export const EnhancedTableHead = (props) => {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell
+            key='details'
+            align='center'
+          >
+            Details
+          </TableCell>
       </TableRow>
     </TableHead>
   );

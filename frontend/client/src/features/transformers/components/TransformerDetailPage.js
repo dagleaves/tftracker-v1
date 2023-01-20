@@ -82,7 +82,7 @@ export const TransformerDetailPage = () => {
                         </ListItemIcon>
                         <ListItemText 
                             primaryTypographyProps={{fontSize: '14px'}}
-                            primary={`Release Price: ${transformer['price']}`} />
+                            primary={`Release Price: $${transformer['price']}`} />
                     </ListItem>
                 </List>
             </Grid>

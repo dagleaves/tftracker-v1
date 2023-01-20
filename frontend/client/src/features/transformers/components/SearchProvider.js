@@ -1,10 +1,13 @@
 import React, { Fragment , useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { checkAuth } from '@/features/auth';
+import { search } from './searchSlice';
 
-export const AuthProvider = ({ children }) => {
+export const SearchProvider = ({ children }) => {
     const dispatch = useDispatch();
-    dispatch(checkAuth());
+
+    useEffect(() => {
+        dispatch(search(1));
+    });
 
     return (
         <Fragment>

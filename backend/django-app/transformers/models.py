@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from autoslug import AutoSlugField
 from django.contrib.postgres.indexes import GinIndex
 
 

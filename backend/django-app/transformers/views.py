@@ -1,11 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from django.contrib.postgres.search import TrigramWordSimilarity
+from django.db.models import Count
 from django.utils import timezone
 from operator import itemgetter
 from datetime import datetime
 import numpy as np
 import time
+
+from rest_framework.response import Response
+from rest_framework import status
 
 from .models import Transformer
 from .serializers import TransformerSerializer, TransformerDetailSerializer
@@ -21,18 +25,35 @@ class TransformerDetailView(RetrieveAPIView):
     serializer_class = TransformerDetailSerializer
 
 
+class TransformerAvailableFiltersView(APIView):
+    filter_fields = ['toyline', 'subline', 'size_class', 'release_date', 'price', 'manufacturer']
+
+    def get_queryset(self):
+        return Transformer.objects.all().filter(is_visible=True)
+
+    def get(self, request, format=None):
+        available_filters = {}
+        for field in self.filter_fields:
+            queryset = self.get_queryset().annotate(count=Count(field))
+            available = list(queryset.order_by().values_list(field, flat=True).distinct().order_by('count'))
+            if field == 'manufacturer':
+                unique_values = [self.manufacturer_choices[choice] for choice in unique_values.tolist()]
+            available_filters[field] = available
+
+        return Response(available_filters, status=status.HTTP_200_OK)
+
 class TransfomerSearchView(APIView):
     queryset = Transformer.objects.all().filter(is_visible=True)
     serializer_class = TransformerSerializer
     paginator = TransformerPaginator()
     filter_fields = ['toyline', 'subline', 'size_class', 'release_date', 'price', 'manufacturer']
+    manufacturer_choices = dict(Transformer.MANUFACTURERS)
 
     def get_queryset(self):
         return Transformer.objects.all().filter(is_visible=True)
 
     def filter_toyline(self, queryset, toyline_filter):
         if toyline_filter:
-            print(toyline_filter)
             return queryset.exclude(toyline__name__in=toyline_filter)
         return queryset
 
@@ -47,6 +68,7 @@ class TransfomerSearchView(APIView):
         return queryset
 
     def filter_manufacturer(self, queryset, manufacturer_filter):
+        manufacturer_filter = [manufacturer[0] for manufacturer in manufacturer_filter]
         if manufacturer_filter:
             return queryset.exclude(manufacturer__in=manufacturer_filter)
         return queryset
@@ -136,7 +158,9 @@ class TransfomerSearchView(APIView):
                 }
                 continue
             unique_values, frequency = np.unique(col, return_counts=True)
-            options = list((val, freq) for val,freq in zip(unique_values.tolist(), frequency))        
+            if name == 'manufacturer':
+                unique_values = [self.manufacturer_choices[choice] for choice in unique_values.tolist()]
+            options = list((val, freq) for val,freq in zip(unique_values, frequency))        
             sorted_filter_options[name] = sorted(options, key=itemgetter(1), reverse=True)
         return sorted_filter_options
 

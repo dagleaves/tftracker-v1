@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { search } from "@/features/transformers";
 
 import axios from '@/api/axios';
 
@@ -55,6 +56,7 @@ export const login = createAsyncThunk(
             if (res.status === 200) {
                 const { dispatch } = thunkAPI;
                 dispatch(getUser());
+                dispatch(search());
 
                 return data;
             }

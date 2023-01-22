@@ -1,9 +1,8 @@
 import { TransformerDetailPage } from "../components/TransformerDetailPage";
-import { TransformerTable } from "../components/TransformerTable";
 import axios from '@/api/axios';
 import { NotFound } from "@/features/misc";
 
-import { DataTable } from "../components/DataTable";
+import { TransformerTable } from "../components/TransformerTable";
 import { SearchProvider } from "../components/SearchProvider";
 
 const getTransformer = async (slug) => {
@@ -66,7 +65,7 @@ export const transformerRoutes = [
     },
     {
         path: "search/",
-        element: <SearchProvider ><DataTable /></SearchProvider>,
+        element: <SearchProvider ><TransformerTable /></SearchProvider>,
         errorElement: <NotFound />
     }
 ];

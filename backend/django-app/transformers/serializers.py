@@ -18,6 +18,7 @@ class ToylineSerializer(serializers.ModelSerializer):
 
 
 class TransformerSerializer(serializers.ModelSerializer):
+    manufacturer = serializers.CharField(source='get_manufacturer_display')
 
     class Meta:
         model = Transformer
@@ -25,6 +26,7 @@ class TransformerSerializer(serializers.ModelSerializer):
 
 
 class TransformerDetailSerializer(serializers.ModelSerializer):
+    manufacturer = serializers.CharField(source='get_manufacturer_display')
 
     class Meta:
         model = Transformer

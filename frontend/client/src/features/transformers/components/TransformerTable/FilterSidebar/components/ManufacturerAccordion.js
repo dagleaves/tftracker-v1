@@ -13,13 +13,12 @@ import {
 
 export const ManufacturerAccordion = () => {
     const dispatch = useDispatch();
-    const { filters, page } = useSelector(state => state.search);
-    const availableFilters = page.available_filters;
+    const { filters, availableFilters } = useSelector(state => state.search);
 
     const handleManufacturerChange = (event) => {
         const manufacturers = [...filters.manufacturer]
         const manufacturer = event.target.id;
-        if (!event.target.checked) {
+        if (event.target.checked) {
             manufacturers.push(manufacturer);
         } else {
             const ix = manufacturers.indexOf(manufacturer);
@@ -41,41 +40,24 @@ export const ManufacturerAccordion = () => {
                 <Typography>Manufacturer</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                {[...availableFilters.manufacturer, ...filters.manufacturer].map((manufacturer) => {
-                    var name;
-                    var amount;
-                    if (Array.isArray(manufacturer)) {
-                        name = manufacturer[0];
-                        amount = manufacturer[1];
-                    }
-                    else {
-                        availableFilters.manufacturer.forEach(manufacturer_list => {
-                            if (manufacturer_list[0] === manufacturer) {
-                                return null;
-                            }
-                        })
-                        name = manufacturer;
-                        amount = 0;
-                    }
-
+                {[...availableFilters.manufacturer].map((manufacturer) => {
                     return (
                         <Stack
                             direction='row'
                             justifyContent='space-between'
                             alignItems='center'
-                            key={name}
+                            key={manufacturer}
                         >
                             <Stack
                                 direction='row'
                                 alignItems='center'
                                 spacing={1}
                             >
-                                <Typography>{name}</Typography>
-                                <Typography sx={{ fontSize: '0.75rem' }}>({amount})</Typography>
+                                <Typography>{manufacturer}</Typography>
                             </Stack>
                             <Switch 
-                                id={name}
-                                checked={!filters.manufacturer.includes(name)}
+                                id={manufacturer}
+                                checked={filters.manufacturer.includes(manufacturer)}
                                 onChange={handleManufacturerChange}
                             />
                         </Stack>

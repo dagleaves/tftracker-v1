@@ -33,7 +33,7 @@ export const MainLayout = () => {
             >
                 <CssBaseline />
                 <NavBar />
-                    <Outlet />
+                <Outlet />
                 <Footer />
             </Box>
         </>

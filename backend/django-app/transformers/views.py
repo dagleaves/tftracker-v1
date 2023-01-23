@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import Count
+from django.db.models import Count, Max, Min
 from django.utils import timezone
 from operator import itemgetter
 from datetime import datetime
@@ -26,7 +26,9 @@ class TransformerDetailView(RetrieveAPIView):
 
 
 class TransformerAvailableFiltersView(APIView):
-    filter_fields = ['toyline', 'subline', 'size_class', 'release_date', 'price', 'manufacturer']
+    filter_fields = ['toyline', 'subline', 'size_class', 'manufacturer']
+    min_max_fields = ['release_date', 'price']
+    manufacturer_choices = dict(Transformer.MANUFACTURERS)
 
     def get_queryset(self):
         return Transformer.objects.all().filter(is_visible=True)
@@ -34,11 +36,15 @@ class TransformerAvailableFiltersView(APIView):
     def get(self, request, format=None):
         available_filters = {}
         for field in self.filter_fields:
-            queryset = self.get_queryset().annotate(count=Count(field))
-            available = list(queryset.order_by().values_list(field, flat=True).distinct().order_by('count'))
+            available = list(self.get_queryset().order_by().values_list(field).annotate(count=Count(field)).distinct().order_by('-count').values_list(field, flat=True))
             if field == 'manufacturer':
-                unique_values = [self.manufacturer_choices[choice] for choice in unique_values.tolist()]
+                available = [self.manufacturer_choices[choice] for choice in available]
             available_filters[field] = available
+
+        for field in self.min_max_fields:
+            min_value = list(self.get_queryset().aggregate(Min(field)).values())[0]
+            max_value = list(self.get_queryset().aggregate(Max(field)).values())[0]
+            available_filters[field] = (min_value, max_value)
 
         return Response(available_filters, status=status.HTTP_200_OK)
 
@@ -46,7 +52,10 @@ class TransfomerSearchView(APIView):
     queryset = Transformer.objects.all().filter(is_visible=True)
     serializer_class = TransformerSerializer
     paginator = TransformerPaginator()
-    filter_fields = ['toyline', 'subline', 'size_class', 'release_date', 'price', 'manufacturer']
+
+    search_fields = ['name', 'toyline', 'subline', 'size_class']
+    filter_fields = ['toyline', 'subline', 'size_class', 'manufacturer']
+    min_max_fields = ['release_date', 'price']
     manufacturer_choices = dict(Transformer.MANUFACTURERS)
 
     def get_queryset(self):
@@ -54,23 +63,23 @@ class TransfomerSearchView(APIView):
 
     def filter_toyline(self, queryset, toyline_filter):
         if toyline_filter:
-            return queryset.exclude(toyline__name__in=toyline_filter)
+            return queryset.filter(toyline__name__in=toyline_filter)
         return queryset
 
     def filter_subline(self, queryset, subline_filter):
         if subline_filter:
-            return queryset.exclude(subline__name__in=subline_filter)
+            return queryset.filter(subline__name__in=subline_filter)
         return queryset
 
     def filter_size_class(self, queryset, size_class_filter):
         if size_class_filter:
-            return queryset.exclude(size_class__in=size_class_filter)
+            return queryset.filter(size_class__in=size_class_filter)
         return queryset
 
     def filter_manufacturer(self, queryset, manufacturer_filter):
         manufacturer_filter = [manufacturer[0] for manufacturer in manufacturer_filter]
         if manufacturer_filter:
-            return queryset.exclude(manufacturer__in=manufacturer_filter)
+            return queryset.filter(manufacturer__in=manufacturer_filter)
         return queryset
 
     def filter_release_date(self, queryset, release_date_bounds):
@@ -120,49 +129,25 @@ class TransfomerSearchView(APIView):
         if not search_keywords:
             return queryset
 
-        search_fields = ['name', 'toyline', 'subline', 'size_class']
-        similarities = [TrigramWordSimilarity(search_keywords, field) for field in search_fields]
+        similarities = [TrigramWordSimilarity(search_keywords, field) for field in self.search_fields]
         similarity = sum(similarities) / len(similarities)
         return queryset.annotate(similarity=similarity).filter(similarity__gt=0.1).order_by('-similarity')
 
     def get_available_filters(self, queryset):
-        # Get all available filter field values
-        filter_field_values = queryset.values_list(*self.filter_fields)
-        
-        if not filter_field_values:
-            return {
-                'toyline': [],
-                'subline': [],
-                'size_class': [],
-                'manufacturer': [],
-                'release_date': {
-                    'min': 0,
-                    'max': 0
-                },
-                'price': {
-                    'upper': 0,
-                    'lower': 0
-                }
-            }
-        
-        value_np_array = np.core.records.fromrecords(filter_field_values, names=self.filter_fields)
+        available_filters = {}
+        for field in self.filter_fields:
+            available = list(queryset.order_by().values_list(field).annotate(count=Count(field)).distinct().order_by('-count'))
+            if field == 'manufacturer':
+                available = [(self.manufacturer_choices[choice], freq) for choice, freq in available]
+            available_filters[field] = available
 
-        # Sort filter fields by frequency - https://stackoverflow.com/a/66064470
-        sorted_filter_options = {}
-        for name in self.filter_fields:
-            col = value_np_array[name]
-            if name in ['release_date', 'price']:
-                sorted_filter_options[name] = {
-                    'min': col.min(), 
-                    'max': col.max()
-                }
-                continue
-            unique_values, frequency = np.unique(col, return_counts=True)
-            if name == 'manufacturer':
-                unique_values = [self.manufacturer_choices[choice] for choice in unique_values.tolist()]
-            options = list((val, freq) for val,freq in zip(unique_values, frequency))        
-            sorted_filter_options[name] = sorted(options, key=itemgetter(1), reverse=True)
-        return sorted_filter_options
+        for field in self.min_max_fields:
+            min_value = list(queryset.aggregate(Min(field)).values())[0]
+            max_value = list(queryset.aggregate(Max(field)).values())[0]
+            available_filters[field] = (min_value, max_value)
+
+        return available_filters
+
 
     def post(self, request, format=None):
         start_time = time.time()
@@ -225,12 +210,12 @@ class TransfomerSearchView(APIView):
         # Paginate response
         response = self.paginator.get_paginated_response(serializer.data)
 
-        # Add available filter options to response
-        available_filters = self.get_available_filters(queryset) 
-        response.data['available_filters'] = available_filters
-
         # Add response time to response
         response.data['response_time'] = round(time.time() - start_time, 2)
+
+        # Add available filters to response
+        available_filters = self.get_available_filters(queryset)
+        response.data['available_filters'] = available_filters
 
         return response
 

@@ -8,27 +8,28 @@ import { Accordion, AccordionSummary, AccordionDetails } from './BaseAccordion';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     search,
-    updateToylineFilter,
+    updateFilter
 } from '@/features/transformers';
 
-export const ToylineAccordion = () => {
+export const FilterAccordion = ({ filterKey, filterDisplayName}) => {
     const dispatch = useDispatch();
     const { filters, availableFilters } = useSelector(state => state.search);
-    // const { filters, page } = useSelector(state => state.search);
-    // const availableFilters = page.availableFilters;
 
-    const handleToylineChange = (event) => {
-        const toylines = [...filters.toyline]
-        const toyline = event.target.id;
+    const handleChange = (event) => {
+        const currentFilter = [...filters[filterKey]]
+        const selectedFilter = event.target.id;
         if (event.target.checked) {
-            toylines.push(toyline);
+            currentFilter.push(selectedFilter);
         } else {
-            const ix = toylines.indexOf(toyline);
+            const ix = currentFilter.indexOf(selectedFilter);
             if (ix > -1) {
-                toylines.splice(ix, 1);
+                currentFilter.splice(ix, 1);
             }
         }
-        dispatch(updateToylineFilter(toylines));
+        dispatch(updateFilter({
+            'key': filterKey,
+            'value': currentFilter
+        }));
         dispatch(search());
     }
 
@@ -39,28 +40,28 @@ export const ToylineAccordion = () => {
             aria-controls="panel2a-content"
             id="panel2a-header"
             >
-                <Typography>Toyline</Typography>
+                <Typography>{filterDisplayName}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                {[...availableFilters.toyline].map((toyline) => {
+                {[...availableFilters[filterKey]].map((filterOption) => {
                     return (
                         <Stack
                             direction='row'
                             justifyContent='space-between'
                             alignItems='center'
-                            key={toyline}
+                            key={filterOption}
                         >
                             <Stack
                                 direction='row'
                                 alignItems='center'
                                 spacing={1}
                             >
-                                <Typography>{toyline}</Typography>
+                                <Typography>{filterOption}</Typography>
                             </Stack>
                             <Switch 
-                                id={toyline}
-                                checked={filters.toyline.includes(toyline)}
-                                onChange={handleToylineChange}
+                                id={filterOption}
+                                checked={filters[filterKey].includes(filterOption)}
+                                onChange={handleChange}
                             />
                         </Stack>
                     );

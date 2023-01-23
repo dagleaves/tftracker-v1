@@ -13,13 +13,14 @@ import {
 
 export const SublineAccordion = () => {
     const dispatch = useDispatch();
-    const { filters, page } = useSelector(state => state.search);
-    const availableFilters = page.available_filters;
+    const { filters, availableFilters } = useSelector(state => state.search);
+    // const { filters, page } = useSelector(state => state.search);
+    // const availableFilters = page.availableFilters;
 
     const handleSublineChange = (event) => {
         const sublines = [...filters.subline]
         const subline = event.target.id;
-        if (!event.target.checked) {
+        if (event.target.checked) {
             sublines.push(subline);
         } else {
             const ix = sublines.indexOf(subline);
@@ -41,41 +42,25 @@ export const SublineAccordion = () => {
                 <Typography>Subline</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                {[...availableFilters.subline, ...filters.subline].map((subline) => {
-                    var name;
-                    var amount;
-                    if (Array.isArray(subline)) {
-                        name = subline[0];
-                        amount = subline[1];
-                    }
-                    else {
-                        availableFilters.subline.forEach(subline_list => {
-                            if (subline_list[0] === subline) {
-                                return null;
-                            }
-                        })
-                        name = subline;
-                        amount = 0;
-                    }
-
+                {[...availableFilters.subline].map((subline) => {
                     return (
                         <Stack
                             direction='row'
                             justifyContent='space-between'
                             alignItems='center'
-                            key={name}
+                            key={subline}
                         >
                             <Stack
                                 direction='row'
                                 alignItems='center'
                                 spacing={1}
                             >
-                                <Typography>{name}</Typography>
-                                <Typography sx={{ fontSize: '0.75rem' }}>({amount})</Typography>
+                                <Typography>{subline}</Typography>
+                                {/* <Typography sx={{ fontSize: '0.75rem' }}>({amount})</Typography> */}
                             </Stack>
                             <Switch 
-                                id={name}
-                                checked={!filters.subline.includes(name)}
+                                id={subline}
+                                checked={filters.subline.includes(subline)}
                                 onChange={handleSublineChange}
                             />
                         </Stack>

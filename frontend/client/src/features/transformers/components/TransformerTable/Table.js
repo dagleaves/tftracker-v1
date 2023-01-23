@@ -65,14 +65,12 @@ export const TransformerTable = () => {
         <FilterSidebar />
       </Grid>
 
-      <Grid item>
-        <Divider orientation='vertical' sx={{mt: 13}} />
-      </Grid>
+      <Divider orientation='vertical' flexItem={true} sx={{mt: 15, ml: 2}} />
 
-      <Grid item xs={8}>
+      <Grid item xs={6}>
         <Box>
           <Typography fontSize={15} sx={{ my: 1 }}>Found {count} results ({responseTime} seconds)</Typography>
-          <Paper sx={{ width: '100%', mb: 2 }}>
+          <Paper>
             <EnhancedTableToolbar />
             <TableContainer>
               <Table

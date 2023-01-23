@@ -8,27 +8,27 @@ import { Accordion, AccordionSummary, AccordionDetails } from './BaseAccordion';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     search,
-    updateToylineFilter,
+    updateSizeClassFilter,
 } from '@/features/transformers';
 
-export const ToylineAccordion = () => {
+export const SizeClassAccordion = () => {
     const dispatch = useDispatch();
     const { filters, availableFilters } = useSelector(state => state.search);
     // const { filters, page } = useSelector(state => state.search);
     // const availableFilters = page.availableFilters;
 
-    const handleToylineChange = (event) => {
-        const toylines = [...filters.toyline]
-        const toyline = event.target.id;
+    const handleSizeClassChange = (event) => {
+        const sizeClasses = [...filters.size_class]
+        const sizeClass = event.target.id;
         if (event.target.checked) {
-            toylines.push(toyline);
+            sizeClasses.push(sizeClass);
         } else {
-            const ix = toylines.indexOf(toyline);
+            const ix = sizeClasses.indexOf(sizeClass);
             if (ix > -1) {
-                toylines.splice(ix, 1);
+                sizeClasses.splice(ix, 1);
             }
         }
-        dispatch(updateToylineFilter(toylines));
+        dispatch(updateSizeClassFilter(sizeClasses));
         dispatch(search());
     }
 
@@ -39,28 +39,28 @@ export const ToylineAccordion = () => {
             aria-controls="panel2a-content"
             id="panel2a-header"
             >
-                <Typography>Toyline</Typography>
+                <Typography>Size Class</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                {[...availableFilters.toyline].map((toyline) => {
+                {[...availableFilters.size_class].map((sizeClass) => {
                     return (
                         <Stack
                             direction='row'
                             justifyContent='space-between'
                             alignItems='center'
-                            key={toyline}
+                            key={sizeClass}
                         >
                             <Stack
                                 direction='row'
                                 alignItems='center'
                                 spacing={1}
                             >
-                                <Typography>{toyline}</Typography>
+                                <Typography>{sizeClass}</Typography>
                             </Stack>
                             <Switch 
-                                id={toyline}
-                                checked={filters.toyline.includes(toyline)}
-                                onChange={handleToylineChange}
+                                id={sizeClass}
+                                checked={filters.size_class.includes(sizeClass)}
+                                onChange={handleSizeClassChange}
                             />
                         </Stack>
                     );

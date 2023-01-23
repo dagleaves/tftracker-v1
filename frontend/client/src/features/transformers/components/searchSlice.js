@@ -17,7 +17,6 @@ export const search = createAsyncThunk(
         const body = {
             ...filters,
             ...sorting,
-            'test': null
         };
 
         try {
@@ -29,13 +28,36 @@ export const search = createAsyncThunk(
                 const page = {
                     'count': +data.count,
                     'results': data.results,
-                    'available_filters': data.available_filters
+                    'availableFilters': data.available_filters
                 };
                 const ret = {
                     'page': page,
-                    'response_time': data.response_time
+                    'responseTime': data.response_time
                 };
                 return ret;
+            }
+            else {
+                return thunkAPI.rejectWithValue(data);
+            }
+          } 
+          catch (err) {
+              return thunkAPI.rejectWithValue(err.response.data);
+          }
+    }
+);
+
+
+export const getAvailableFilters = createAsyncThunk(
+    'search/getAvailableFilters',
+    async (_, thunkAPI) => {
+
+        try {
+            const res = await axios.get(`/api/transformers/get-filters/`);
+      
+            const data = res.data;
+
+            if (res.status === 200) {
+                return data;
             }
             else {
                 return thunkAPI.rejectWithValue(data);
@@ -66,6 +88,7 @@ const initialState = {
             'lower': null
         }
     },
+    availableFilters: null,
     page: null,
     pagination: {
         rowsPerPage: 5,
@@ -94,6 +117,9 @@ const searchSlice = createSlice({
         },
         updateRowsPerPage: (state, action) => {
             state.pagination.rowsPerPage = action.payload;
+        },
+        updateFilter: (state, action) => {
+            state.filters[action.payload.key] = action.payload.value;
         },
         updateSearchFilter: (state, action) => {
             state.filters.search = action.payload;
@@ -129,11 +155,24 @@ const searchSlice = createSlice({
             })
             .addCase(search.fulfilled, (state, action) => {
                 state.page = action.payload.page;
-                state.responseTime = action.payload.response_time;
+                state.responseTime = action.payload.responseTime;
                 state.loading = false;
                 state.errors = null;
             })
             .addCase(search.rejected, (state, action) => {
+                state.loading = false;
+                state.errors = action.payload;
+            })
+            .addCase(getAvailableFilters.pending, state => {
+                state.loading = true;
+                state.errors = null;
+            })
+            .addCase(getAvailableFilters.fulfilled, (state, action) => {
+                state.availableFilters = action.payload;
+                state.loading = false;
+                state.errors = null;
+            })
+            .addCase(getAvailableFilters.rejected, (state, action) => {
                 state.loading = false;
                 state.errors = action.payload;
             })
@@ -153,6 +192,7 @@ export const {
     updateReleaseDateFilter,
     updateFutureReleasesFilter,
     updatePriceFilter,
+    updateFilter,
     resetSearchState
 } = searchSlice.actions;
 export const searchReducer = searchSlice.reducer;

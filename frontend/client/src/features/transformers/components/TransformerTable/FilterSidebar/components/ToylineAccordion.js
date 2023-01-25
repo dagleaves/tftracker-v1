@@ -14,8 +14,6 @@ import {
 export const ToylineAccordion = () => {
     const dispatch = useDispatch();
     const { filters, availableFilters } = useSelector(state => state.search);
-    // const { filters, page } = useSelector(state => state.search);
-    // const availableFilters = page.availableFilters;
 
     const handleToylineChange = (event) => {
         const toylines = [...filters.toyline]
@@ -29,7 +27,6 @@ export const ToylineAccordion = () => {
             }
         }
         dispatch(updateToylineFilter(toylines));
-        dispatch(search());
     }
 
     return (

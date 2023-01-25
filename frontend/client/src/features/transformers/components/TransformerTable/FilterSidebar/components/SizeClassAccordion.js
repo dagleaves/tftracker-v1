@@ -14,8 +14,6 @@ import {
 export const SizeClassAccordion = () => {
     const dispatch = useDispatch();
     const { filters, availableFilters } = useSelector(state => state.search);
-    // const { filters, page } = useSelector(state => state.search);
-    // const availableFilters = page.availableFilters;
 
     const handleSizeClassChange = (event) => {
         const sizeClasses = [...filters.size_class]
@@ -29,7 +27,6 @@ export const SizeClassAccordion = () => {
             }
         }
         dispatch(updateSizeClassFilter(sizeClasses));
-        dispatch(search());
     }
 
     return (

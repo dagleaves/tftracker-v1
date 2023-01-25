@@ -14,8 +14,6 @@ import {
 export const SublineAccordion = () => {
     const dispatch = useDispatch();
     const { filters, availableFilters } = useSelector(state => state.search);
-    // const { filters, page } = useSelector(state => state.search);
-    // const availableFilters = page.availableFilters;
 
     const handleSublineChange = (event) => {
         const sublines = [...filters.subline]
@@ -29,7 +27,6 @@ export const SublineAccordion = () => {
             }
         }
         dispatch(updateSublineFilter(sublines));
-        dispatch(search());
     }
 
     return (

@@ -29,9 +29,13 @@ import { FilterSidebar } from './FilterSidebar';
 
 export const TransformerTable = () => {
   const dispatch = useDispatch();
-  const { page, pagination, sorting, responseTime } = useSelector(state => state.search);
+  const { page, pagination, sorting, responseTime, filters } = useSelector(state => state.search);
   const { order, ascending } = sorting;
   const { rowsPerPage, pageNumber } = pagination;
+
+  React.useEffect(() => {
+    dispatch(search());
+  }, [filters]);
 
   const count = page['count'];
   const rows = page['results'];
@@ -57,24 +61,24 @@ export const TransformerTable = () => {
 
   // Avoid a layout jump when reaching the last pageNumber with empty rows.
   const emptyRows =
-    pageNumber < 0 ? Math.max(0, rowsPerPage - rows.length + 1) : 0;
+    pageNumber > 0 ? Math.max(0, rowsPerPage - rows.length + 1) : 0;
 
   return (
-    <Grid container justifyContent='center' spacing={2}>
+    <Grid container justifyContent='center' spacing={2} sx={{ mb: 3 }}>
       <Grid item xs={2}>
         <FilterSidebar />
       </Grid>
 
       <Divider orientation='vertical' flexItem={true} sx={{mt: 15, ml: 2}} />
 
-      <Grid item xs={6}>
+      <Grid item>
         <Box>
           <Typography fontSize={15} sx={{ my: 1 }}>Found {count} results ({responseTime} seconds)</Typography>
           <Paper>
             <EnhancedTableToolbar />
             <TableContainer>
               <Table
-                // sx={{ minWidth: 500 }}
+                sx={{ minWidth: 1000 }}
                 aria-labelledby="tableTitle"
                 size={'medium'}
               >
@@ -112,7 +116,7 @@ export const TransformerTable = () => {
                         </TableRow>
                       );
                     })}
-                  {emptyRows > 0 && (
+                  {emptyRows > 0 ? (
                     <TableRow
                       style={{
                         height: (52) * emptyRows,
@@ -120,7 +124,7 @@ export const TransformerTable = () => {
                     >
                       <TableCell colSpan={8} />
                     </TableRow>
-                  )}
+                  ) : null}
                 </TableBody>
               </Table>
             </TableContainer>

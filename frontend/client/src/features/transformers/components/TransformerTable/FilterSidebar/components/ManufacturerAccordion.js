@@ -27,7 +27,6 @@ export const ManufacturerAccordion = () => {
             }
         }
         dispatch(updateManufacturerFilter(manufacturers));
-        dispatch(search());
     }
 
     return (

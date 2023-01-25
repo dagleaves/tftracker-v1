@@ -18,7 +18,6 @@ export const FutureReleasesAccordion = () => {
 
     const handleFutureReleasesChange = (event) => {
         dispatch(updateFutureReleasesFilter(event.target.checked));
-        dispatch(search());
     };
 
     return (

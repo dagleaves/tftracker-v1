@@ -6,26 +6,14 @@ import Slider from '@mui/material/Slider';
 import MuiInput from '@mui/material/Input';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Switch from '@mui/material/Switch';
-import Stack from '@mui/material/Stack';
 import { Accordion, AccordionSummary, AccordionDetails } from './BaseAccordion';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    search,
     updatePriceFilter,
 } from '@/features/transformers';
 
-export const FutureReleasesAccordion = () => {
-
-    const dispatch = useDispatch();
-    const { filters, availableFilters } = useSelector(state => state.search);
-
-    const handleFutureReleasesChange = (event) => {
-        dispatch(updateFutureReleasesFilter(event.target.checked));
-        dispatch(search());
-    };
-
+export const PriceAccordion = () => {
     return (
         <Accordion>
             <AccordionSummary
@@ -33,22 +21,10 @@ export const FutureReleasesAccordion = () => {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <Typography>Future Releases</Typography>
+              <Typography>Price</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <Stack
-                    direction='row'
-                    justifyContent='space-between'
-                    alignItems='center'
-                >
-                    <Typography>
-                        Include Future Releases
-                    </Typography>
-                    <Switch 
-                        checked={filters.future_releases}
-                        onChange={handleFutureReleasesChange}
-                    />
-                </Stack>
+              <InputSlider />
             </AccordionDetails>
         </Accordion>
     )
@@ -56,7 +32,7 @@ export const FutureReleasesAccordion = () => {
 
 
 const Input = styled(MuiInput)`
-  width: 42px;
+  // width: 42px;
 `;
 
 const minDistance = 0;
@@ -68,7 +44,7 @@ const InputSlider = () => {
     const currentPriceRange = filters.price;
     const maxPriceRange = availableFilters.price;
 
-    const handleSliderChange = (event, newValue) => {
+    const handleSliderChange = (event, newValue, activeThumb) => {
         if (!Array.isArray(newValue)) {
             return;
           }
@@ -84,20 +60,23 @@ const InputSlider = () => {
           } else {
             dispatch(updatePriceFilter(newValue));
           }
-          dispatch(search());
     };
 
     const handleInputChange = (event) => {
-        setValue(event.target.value === '' ? '' : Number(event.target.value));
+      if (event.target.value === '') {
+        return;
+      }
+      const newValue = Number(event.target.value);
+      const newRange = [...currentPriceRange];
+      if (event.target.id === 'min') {
+        newRange[0] = newValue;
+      } else {
+        newRange[1] = newValue;
+      }
+      dispatch(updatePriceFilter(newRange));
     };
 
-    const handleBlur = () => {
-        if (value < 0) {
-        setValue(0);
-        } else if (value > 100) {
-        setValue(100);
-        }
-    };
+    // TODO: NEED TO CONVERT TO STACK FOR INPUTS -- TOO WIDE CURRENTLY
 
     return (
         <Box sx={{ width: 250 }}>
@@ -108,10 +87,9 @@ const InputSlider = () => {
             <Grid item>
                 <Input
                     id='min'
-                    value={currentPriceRange[0]}
+                    value={currentPriceRange.lower ? currentPriceRange[0] : maxPriceRange[0]}
                     size="small"
                     onChange={handleInputChange}
-                    onBlur={handleBlur}
                     inputProps={{
                     step: 1,
                     min: maxPriceRange[0],
@@ -131,10 +109,9 @@ const InputSlider = () => {
             <Grid item>
               <Input
                 id='max'
-                value={currentPriceRange[1]}
+                value={currentPriceRange.upper ? currentPriceRange[1] : maxPriceRange[1]}
                 size="small"
                 onChange={handleInputChange}
-                onBlur={handleBlur}
                 inputProps={{
                   step: 1,
                   min: maxPriceRange[0],

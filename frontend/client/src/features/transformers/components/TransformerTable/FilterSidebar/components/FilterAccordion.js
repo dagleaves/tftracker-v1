@@ -1,7 +1,8 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Switch from '@mui/material/Switch';
+import Checkbox from '@mui/material/Checkbox';
+// import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import { Accordion, AccordionSummary, AccordionDetails } from './BaseAccordion';
 
@@ -58,7 +59,7 @@ export const FilterAccordion = ({ filterKey, filterDisplayName}) => {
                             >
                                 <Typography>{filterOption}</Typography>
                             </Stack>
-                            <Switch 
+                            <Checkbox 
                                 id={filterOption}
                                 checked={filters[filterKey].includes(filterOption)}
                                 onChange={handleChange}

@@ -45,7 +45,9 @@ const InputSlider = () => {
     const maxPriceRange = availableFilters.price;
 
     const handleSliderChange = (event, newValue, activeThumb) => {
-        if (!Array.isArray(newValue)) {
+      console.log(newValue);  
+      
+      if (!Array.isArray(newValue)) {
             return;
           }
       
@@ -76,18 +78,15 @@ const InputSlider = () => {
       dispatch(updatePriceFilter(newRange));
     };
 
-    // TODO: NEED TO CONVERT TO STACK FOR INPUTS -- TOO WIDE CURRENTLY
+    // TODO: Maybe switch to just two input boxes with a button on the right like best buy?
 
     return (
         <Box sx={{ width: 250 }}>
-          <Typography id="input-slider" gutterBottom>
-            Price
-          </Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item>
+          <Grid container spacing={2} alignItems="center" justifyItems='space-between'>
+            <Grid item xs={4}>
                 <Input
                     id='min'
-                    value={currentPriceRange.lower ? currentPriceRange[0] : maxPriceRange[0]}
+                    value={currentPriceRange[0] ? currentPriceRange[0] : maxPriceRange[0]}
                     size="small"
                     onChange={handleInputChange}
                     inputProps={{
@@ -101,15 +100,18 @@ const InputSlider = () => {
             </Grid>
             <Grid item xs>
               <Slider
-                value={currentPriceRange}
+                value={currentPriceRange[1] || currentPriceRange[0] ? currentPriceRange : maxPriceRange}
+                step={1}
+                min={maxPriceRange[0]}
+                max={maxPriceRange[1]}
                 onChange={handleSliderChange}
                 aria-labelledby="input-slider"
               />
             </Grid>
-            <Grid item>
+            <Grid item xs={4}>
               <Input
                 id='max'
-                value={currentPriceRange.upper ? currentPriceRange[1] : maxPriceRange[1]}
+                value={currentPriceRange[1] ? currentPriceRange[1] : maxPriceRange[1]}
                 size="small"
                 onChange={handleInputChange}
                 inputProps={{

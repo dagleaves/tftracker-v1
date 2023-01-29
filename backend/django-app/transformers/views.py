@@ -88,8 +88,8 @@ class TransfomerSearchView(APIView):
             YYYY-MM-DD,YYYY-MM-DD
             Lower Bound,Upper Bound
         '''
-        lower_bound = release_date_bounds['lower']
-        upper_bound = release_date_bounds['upper']
+        lower_bound = release_date_bounds[0]
+        upper_bound = release_date_bounds[1]
 
         # Filter by lower bound
         if lower_bound:
@@ -113,8 +113,11 @@ class TransfomerSearchView(APIView):
             x.xx,y.yy
             Lower Bound,Upper Bound
         '''
-        upper_bound = price_filter['upper']
-        lower_bound = price_filter['lower']
+        if not price_filter:
+            return queryset
+
+        lower_bound = price_filter[0]
+        upper_bound = price_filter[1]
 
         # Filter by lower bound
         if lower_bound:

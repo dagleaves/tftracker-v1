@@ -35,7 +35,7 @@ export const TransformerTable = () => {
 
   React.useEffect(() => {
     dispatch(search());
-  }, [filters]);
+  }, [dispatch, filters]);
 
   const count = page['count'];
   const rows = page['results'];

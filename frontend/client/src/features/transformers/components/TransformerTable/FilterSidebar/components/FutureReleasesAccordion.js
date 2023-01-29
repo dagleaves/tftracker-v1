@@ -7,7 +7,6 @@ import { Accordion, AccordionSummary, AccordionDetails } from './BaseAccordion';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    search,
     updateFutureReleasesFilter,
 } from '@/features/transformers';
 

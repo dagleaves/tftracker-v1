@@ -78,15 +78,9 @@ const initialState = {
         'subline': [],
         'size_class': [],
         'manufacturer': [],
-        'release_date': {
-            'upper': null,
-            'lower': null
-        },
+        'release_date': [null, null],
         'future_releases': true,
-        'price': {
-            'upper': null,
-            'lower': null
-        }
+        'price': [null, null],
     },
     availableFilters: null,
     page: null,

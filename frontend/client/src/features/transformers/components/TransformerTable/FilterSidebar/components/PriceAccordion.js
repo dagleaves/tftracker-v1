@@ -45,18 +45,16 @@ const InputSlider = () => {
     const maxPriceRange = availableFilters.price;
 
     const handleSliderChange = (event, newValue, activeThumb) => {
-      console.log(newValue);  
-      
       if (!Array.isArray(newValue)) {
             return;
           }
       
           if (newValue[1] - newValue[0] < minDistance) {
             if (activeThumb === 0) {
-              const clamped = Math.min(newValue[0], 100 - minDistance);
+              const clamped = Math.min(newValue[0], maxPriceRange[1] - minDistance);
               dispatch(updatePriceFilter([clamped, clamped + minDistance]));
             } else {
-              const clamped = Math.max(newValue[1], minDistance);
+              const clamped = Math.max(newValue[1], maxPriceRange[0] + minDistance);
               dispatch(updatePriceFilter([clamped - minDistance, clamped]));
             }
           } else {

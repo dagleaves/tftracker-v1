@@ -15,7 +15,7 @@ export const FilterSidebar = () => {
     ]
 
     return (
-        <Paper sx={{ mt: 13 }}>
+        <Paper sx={{ mt: 5 }}>
             <FutureReleasesAccordion />
             {filters.map((filter) => {
                 return (

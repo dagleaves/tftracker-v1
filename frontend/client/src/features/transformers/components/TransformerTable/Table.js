@@ -64,7 +64,7 @@ export const TransformerTable = () => {
     pageNumber > 0 ? Math.max(0, rowsPerPage - rows.length + 1) : 0;
 
   return (
-    <Grid container justifyContent='center' spacing={2} sx={{ mb: 3 }}>
+    <Grid container justifyContent='center' spacing={2}>
       <Grid item xs={2}>
         <FilterSidebar />
       </Grid>

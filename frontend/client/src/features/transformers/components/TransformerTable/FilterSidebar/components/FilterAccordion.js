@@ -1,16 +1,14 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 // import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import { Accordion, AccordionSummary, AccordionDetails } from './BaseAccordion';
 
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    search,
-    updateFilter
-} from '@/features/transformers';
+import { updateFilter } from '@/features/transformers';
 
 export const FilterAccordion = ({ filterKey, filterDisplayName}) => {
     const dispatch = useDispatch();
@@ -31,7 +29,6 @@ export const FilterAccordion = ({ filterKey, filterDisplayName}) => {
             'key': filterKey,
             'value': currentFilter
         }));
-        dispatch(search());
     }
 
     return (
@@ -51,6 +48,7 @@ export const FilterAccordion = ({ filterKey, filterDisplayName}) => {
                             justifyContent='space-between'
                             alignItems='center'
                             key={filterOption}
+                            my={-1}
                         >
                             <Stack
                                 direction='row'

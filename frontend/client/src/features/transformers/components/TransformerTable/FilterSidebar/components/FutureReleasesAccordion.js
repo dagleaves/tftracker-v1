@@ -33,6 +33,7 @@ export const FutureReleasesAccordion = () => {
                     direction='row'
                     justifyContent='space-between'
                     alignItems='center'
+                    my={-1}
                 >
                     <Typography>
                         Include Future Releases

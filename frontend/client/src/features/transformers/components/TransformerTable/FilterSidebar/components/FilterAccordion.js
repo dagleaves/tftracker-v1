@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 // import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';

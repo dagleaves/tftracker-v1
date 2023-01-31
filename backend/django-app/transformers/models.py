@@ -24,9 +24,7 @@ class Transformer(models.Model):
         ('T', 'Takara Tomy'),
     )
 
-    # TODO: Probably need to remove slug as it would probably not be unique for same named tfs
-
-    picture = models.ImageField(unique=True, null=True)
+    picture = models.ImageField(unique=True, null=True, upload_to='transformers')
     name = models.CharField(max_length=50)
     release_date = models.DateField()
     price = models.FloatField(validators=[MinValueValidator(0.0)])

@@ -19,3 +19,6 @@ class UserPreferences(models.Model):
         max_length=1, 
         choices=DisplayPreferences.choices, 
         default=DisplayPreferences.NO_ONE)
+
+    def __str__(self):
+        return self.user.first_name + ' ' + self.user.last_name

@@ -99,7 +99,6 @@ export const TransformerTable = () => {
                         >
                           <TableCell
                             component="th"
-                            // id={labelId}
                             scope="row"
                           >
                             {row.name}
@@ -108,7 +107,7 @@ export const TransformerTable = () => {
                           <TableCell align="center">{row.subline}</TableCell>
                           <TableCell align="center">{row.size_class}</TableCell>
                           <TableCell align="center">{row.release_date}</TableCell>
-                          <TableCell align="center">{row.price}</TableCell>
+                          <TableCell align="center">${row.price}</TableCell>
                           <TableCell align="center">{row.manufacturer}</TableCell>
                           <TableCell align="center">
                               <Button variant='contained' component={Link} to={'/transformers/' + row.id + '-' + row.name}>View</Button>

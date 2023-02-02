@@ -22,7 +22,6 @@ export const TransformerDetailPage = () => {
 
 
     return (
-        <div>
         <Grid container justifyContent='center' sx={{ mt: 3 }} >
             <Grid item xs={1} sx={{ mr: 8 }} >
                 <Box 
@@ -87,6 +86,5 @@ export const TransformerDetailPage = () => {
                 </List>
             </Grid>
         </Grid>
-        </div>
     );
 };

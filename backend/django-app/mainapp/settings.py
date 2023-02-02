@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'profiles',
     'preferences',
     'transformers',
+    'tfcollections',
 ]
 
 REST_FRAMEWORK = {

@@ -8,6 +8,7 @@ from .models import Collection
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_default_collections(sender, instance, created, **kwargs):
     if created:
-        Collection.objects.create(user=instance, name='Collection', public=True)
-        Collection.objects.create(user=instance, name='Wishlist', public=True)
-        instance.collection.save()
+        collection = Collection.objects.create(user=instance, name='Collection', public=True)
+        wishlist = Collection.objects.create(user=instance, name='Wishlist', public=True)
+        collection.save()
+        wishlist.save()

@@ -4,7 +4,7 @@ from users.models import UserAccount
 
 
 class Collection(models.Model):
-    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='collections')
     name = models.CharField(max_length=50)
     public = models.BooleanField(default=False)
 
@@ -20,7 +20,8 @@ class CollectionItem(models.Model):
         LOW = 4
         LOWEST = 5
     
-    transformer = models.OneToOneField(Transformer, on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='items')
+    transformer = models.ForeignKey(Transformer, on_delete=models.CASCADE)
     priority = models.PositiveIntegerField(choices=Priorities.choices, null=True, default=None)
     date = models.DateField(auto_now_add=True)
     

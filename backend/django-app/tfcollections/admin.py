@@ -2,8 +2,16 @@ from django.contrib import admin
 from .models import Collection, CollectionItem
 
 
+class CollectionItemInline(admin.TabularInline):
+    model = CollectionItem
+    extra = 0
+
+
 class CollectionAdmin(admin.ModelAdmin):
-    pass
+    model = Collection
+    inlines = [
+        CollectionItemInline
+    ]
 
 
 class CollectionItemAdmin(admin.ModelAdmin):

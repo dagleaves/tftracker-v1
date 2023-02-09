@@ -54,13 +54,16 @@ class TransformerSearchViewFilterTests(APITestCase):
         self.create_default_transformer(name='Optimus Prime', price=50.0, toyline=earthspark, release_date=(timezone.now().date() + datetime.timedelta(days=2)), description='TF', manufacturer='T')
         
         self.filters = {
-            'toyline': '',
-            'size_class': '',
-            'manufacturer': '',
-            'release_date': '',
-            'future_releases': 'true',
-            'price': '',
             'search': '',
+            'toyline': [],
+            'subline': [],
+            'size_class': [],
+            'manufacturer': [],
+            'release_date': [None, None],
+            'future_releases': True,
+            'price': [None, None],
+            'order': '',
+            'ascending': ''
         }
         self.view = TransfomerSearchView()
 
@@ -87,20 +90,20 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure filter toyline method returns only matching toylines
         '''
-        toyline = 'Generations'
+        toylines = ['Generations']
         queryset = self.view.get_queryset()
-        queryset = self.view.filter_toyline(queryset, toyline)
+        queryset = self.view.filter_toyline(queryset, toylines)
         results = list(queryset)
 
         self.assertEqual(len(results), 2)
-        self.assertEqual(results[0].toyline.name, toyline)
-        self.assertEqual(results[1].toyline.name, toyline)
+        self.assertTrue(results[0].toyline.name in toylines)
+        self.assertTrue(results[1].toyline.name in toylines)
 
     def test_filter_toyline_multiple_toylines_matches(self):
         '''
         Ensure filter toyline method returns for multiple toylines to search for
         '''
-        toylines = 'Generations,EarthSpark'
+        toylines = ['Generations', 'EarthSpark']
         queryset = self.view.get_queryset()
         queryset = self.view.filter_toyline(queryset, toylines)
         results = list(queryset)
@@ -125,20 +128,20 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure filter subline method returns only matching toylines
         '''
-        subline = 'Studio Series'
+        sublines = ['Studio Series']
         queryset = self.view.get_queryset()
-        queryset = self.view.filter_subline(queryset, subline)
+        queryset = self.view.filter_subline(queryset, sublines)
         results = list(queryset)
 
         self.assertEqual(len(results), 2)
-        self.assertEqual(results[0].subline.name, subline)
-        self.assertEqual(results[1].subline.name, subline)
+        self.assertTrue(results[0].subline.name in sublines)
+        self.assertTrue(results[1].subline.name in sublines)
 
-    def test_filter_subline_multiple_toylines_matches(self):
+    def test_filter_multiple_sublines_match(self):
         '''
         Ensure filter subline method returns for multiple sublines to search for, including None
         '''
-        sublines = 'Studio Series,None'
+        sublines = ['Studio Series', 'None']
         queryset = self.view.get_queryset()
         queryset = self.view.filter_subline(queryset, sublines)
         results = list(queryset)
@@ -172,11 +175,11 @@ class TransformerSearchViewFilterTests(APITestCase):
         self.assertEqual(results[0].size_class, size_class)
         self.assertEqual(results[1].size_class, size_class)
 
-    def test_filter_size_class_matches(self):
+    def test_filter_multiple_size_class_matches(self):
         '''
         Ensure size class filter returns for multiple size classes in query
         '''
-        size_classes = 'Deluxe,None'
+        size_classes = ['Deluxe', 'None']
         queryset = self.view.get_queryset()
         queryset = self.view.filter_size_class(queryset, size_classes)
         results = list(queryset)
@@ -229,8 +232,8 @@ class TransformerSearchViewFilterTests(APITestCase):
         Ensure release date filter method returns no matches for a high lower bound
         '''
         release_date_lower_bound = str(timezone.now().date() + datetime.timedelta(days=100))
-        release_date_upper_bound = ''
-        release_date = release_date_lower_bound + ',' + release_date_upper_bound
+        release_date_upper_bound = None
+        release_date = [release_date_lower_bound, release_date_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_release_date(queryset, release_date)
         results = list(queryset)
@@ -242,8 +245,8 @@ class TransformerSearchViewFilterTests(APITestCase):
         Ensure release date filter method returns matches for a valid lower bound
         '''
         release_date_lower_bound = str(timezone.now().date())
-        release_date_upper_bound = ''
-        release_date = release_date_lower_bound + ',' + release_date_upper_bound
+        release_date_upper_bound = None
+        release_date = [release_date_lower_bound, release_date_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_release_date(queryset, release_date)
         results = list(queryset)
@@ -257,9 +260,9 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure release date filter method returns no matches for a low upper bound
         '''
-        release_date_lower_bound = ''
+        release_date_lower_bound = None
         release_date_upper_bound = str(timezone.now().date() + datetime.timedelta(days=-100))
-        release_date = release_date_lower_bound + ',' + release_date_upper_bound
+        release_date = [release_date_lower_bound, release_date_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_release_date(queryset, release_date)
         results = list(queryset)
@@ -270,9 +273,9 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure release date filter method returns matches for a valid upper bound
         '''
-        release_date_lower_bound = ''
+        release_date_lower_bound = None
         release_date_upper_bound = str(timezone.now().date() + datetime.timedelta(days=100))
-        release_date = release_date_lower_bound + ',' + release_date_upper_bound
+        release_date = [release_date_lower_bound, release_date_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_release_date(queryset, release_date)
         results = list(queryset)
@@ -288,7 +291,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         release_date_lower_bound = str(timezone.now().date() + datetime.timedelta(days=90))
         release_date_upper_bound = str(timezone.now().date() + datetime.timedelta(days=100))
-        release_date = release_date_lower_bound + ',' + release_date_upper_bound
+        release_date = [release_date_lower_bound, release_date_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_release_date(queryset, release_date)
         results = list(queryset)
@@ -301,7 +304,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         release_date_lower_bound = str(timezone.now().date() + datetime.timedelta(days=-100))
         release_date_upper_bound = str(timezone.now().date() + datetime.timedelta(days=100))
-        release_date = release_date_lower_bound + ',' + release_date_upper_bound
+        release_date = [release_date_lower_bound, release_date_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_release_date(queryset, release_date)
         results = list(queryset)
@@ -315,7 +318,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure future release filter (false) returns only released figures
         '''
-        future_releases = 'false'
+        future_releases = False
         queryset = self.view.get_queryset()
         queryset = self.view.filter_future_releases(queryset, future_releases)
         results = list(queryset)
@@ -328,7 +331,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure future release filter (true) returns all figures (including future releases)
         '''
-        future_releases = 'true'
+        future_releases = True
         queryset = self.view.get_queryset()
         queryset = self.view.filter_future_releases(queryset, future_releases)
         results = list(queryset)
@@ -341,7 +344,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         price_lower_bound = 0.0
         price_upper_bound = 1.0
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)
@@ -354,7 +357,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         price_lower_bound = 0.0
         price_upper_bound = 100000.0
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)
@@ -367,7 +370,7 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         price_lower_bound = 100.0
         price_upper_bound = 0.0
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)
@@ -379,8 +382,8 @@ class TransformerSearchViewFilterTests(APITestCase):
         Ensure price filter method returns all database entries for encompassing lower bound (no upper bound)
         '''
         price_lower_bound = 0.0
-        price_upper_bound = ''
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price_upper_bound = None
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)
@@ -392,8 +395,8 @@ class TransformerSearchViewFilterTests(APITestCase):
         Ensure price filter method returns no matches for lower bound higher than all database entries
         '''
         price_lower_bound = 100.0
-        price_upper_bound = ''
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price_upper_bound = None
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)
@@ -404,9 +407,9 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure price filter method returns all database entries for encompassing lower bound (no upper bound)
         '''
-        price_lower_bound = ''
+        price_lower_bound = None
         price_upper_bound = 100000.0
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)
@@ -417,9 +420,9 @@ class TransformerSearchViewFilterTests(APITestCase):
         '''
         Ensure price filter method returns no matches for lower bound higher than all database entries
         '''
-        price_lower_bound = ''
+        price_lower_bound = None
         price_upper_bound = 0.0
-        price = str(price_lower_bound) + ',' + str(price_upper_bound)
+        price = [price_lower_bound, price_upper_bound]
         queryset = self.view.get_queryset()
         queryset = self.view.filter_price(queryset, price)
         results = list(queryset)

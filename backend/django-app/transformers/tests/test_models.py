@@ -46,7 +46,7 @@ class TransformerModelTests(TestCase):
         tf = Transformer.objects.get(name='Bumblebee')
         self.assertIsNotNone(tf)
         self.assertEqual(tf.name, 'Bumblebee')
-        self.assertEqual(tf.picture.name, 'foo.gif')
+        self.assertEqual(tf.picture.name, 'transformers/foo.gif')
         self.assertEqual(tf.release_date, timezone.now().date())
         self.assertEqual(tf.price, 19.99)
         self.assertEqual(tf.toyline.name, 'Generations')

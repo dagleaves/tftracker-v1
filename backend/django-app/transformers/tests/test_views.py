@@ -161,7 +161,7 @@ class TransformerDetailViewTests(APITestCase):
         self.assertEqual(tf.subline.name, data['subline'])
         self.assertEqual(tf.size_class, data['size_class'])
         self.assertEqual(tf.description, data['description'])
-        self.assertEqual(tf.manufacturer, data['manufacturer'])
+        self.assertEqual(tf.manufacturer, data['manufacturer'][0])
         self.assertTrue(tf.is_visible)
 
 
@@ -169,14 +169,15 @@ class TransformerSearchViewTests(APITestCase):
     
     def_toyline, _ = Toyline.objects.get_or_create(name='None')
     def_subline, _ = Subline.objects.get_or_create(name='None', defaults={'toyline': def_toyline})
-    def create_default_transformer(self, picture=None, name="Bumblebee", release_date=timezone.now().date(), price=19.99, toyline=None, subline=None, size_class='Deluxe', description="", manufacturer='H'):
+    @classmethod
+    def create_default_transformer(cls, picture=None, name="Bumblebee", release_date=timezone.now().date(), price=19.99, toyline=None, subline=None, size_class='Deluxe', description="", manufacturer='H'):
         if picture is None:
             picture = SimpleUploadedFile(name='foo.gif', 
                     content=b'GIF87a\x01\x00\x01\x00\x80\x01\x00\x00\x00\x00ccc,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00')
         if toyline is None:
-            toyline = self.def_toyline
+            toyline = cls.def_toyline
         if subline is None:
-            subline = self.def_subline
+            subline = cls.def_subline
         tf = Transformer.objects.create(picture=picture, name=name, release_date=release_date, price=price, toyline=toyline, subline=subline, size_class=size_class, description=description, manufacturer=manufacturer)
 
     @classmethod
@@ -193,25 +194,28 @@ class TransformerSearchViewTests(APITestCase):
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
         cls.url = reverse('search-view')
-
-    def setUp(self):
         generations, _ = Toyline.objects.get_or_create(name='Generations')
         studio_series, _ = Subline.objects.get_or_create(name='Studio Series', defaults={'toyline': generations})
         legacy, _ = Subline.objects.get_or_create(name='Legacy', defaults={'toyline': generations})
         earthspark, _ = Toyline.objects.get_or_create(name='EarthSpark')
-        self.client.force_authenticate(user=self.user)
-        self.create_default_transformer(toyline=generations, subline=studio_series)
-        self.create_default_transformer(name='Skywarp Autobot Multiple Words', toyline=generations, subline=studio_series)
-        self.create_default_transformer(name='Optimus Prime', price=50.0, toyline=earthspark, release_date=(timezone.now().date() + datetime.timedelta(days=2)), description='TF', manufacturer='T')
         
+        cls.create_default_transformer(toyline=generations, subline=studio_series)
+        cls.create_default_transformer(name='Skywarp Autobot Multiple Words', toyline=generations, subline=studio_series)
+        cls.create_default_transformer(name='Optimus Prime', price=50.0, toyline=earthspark, release_date=(timezone.now().date() + datetime.timedelta(days=2)), description='TF', manufacturer='T')
+
+    def setUp(self):
+        self.client.force_authenticate(user=self.user)
         self.filters = {
-            'toyline': '',
-            'size_class': '',
-            'manufacturer': '',
-            'release_date': '',
-            'future_releases': 'true',
-            'price': '',
             'search': '',
+            'toyline': [],
+            'subline': [],
+            'size_class': [],
+            'manufacturer': [],
+            'release_date': [None, None],
+            'future_releases': True,
+            'price': [None, None],
+            'order': '',
+            'ascending': ''
         }
 
     def tearDown(self):
@@ -220,17 +224,17 @@ class TransformerSearchViewTests(APITestCase):
 
 
     def test_defaults_return_all_in_database(self):
-        response = self.client.post(self.url, self.filters)
+        response = self.client.post(self.url, self.filters, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data['results']), len(Transformer.objects.all()))
 
     
     def test_filter_single_toyline_match(self):
         toyline = 'Generations'
-        self.filters['toyline'] = toyline
+        self.filters['toyline'] = [toyline]
 
-        response = self.client.post(self.url, self.filters)
+        response = self.client.post(self.url, self.filters, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['toyline'], toyline)
-        self.assertEqual(response.data[1]['toyline'], toyline)
+        self.assertEqual(len(response.data['results']), len(Transformer.objects.filter(toyline__in=self.filters['toyline'])))
+        self.assertEqual(response.data['results'][0]['toyline'], toyline)
+        self.assertEqual(response.data['results'][1]['toyline'], toyline)

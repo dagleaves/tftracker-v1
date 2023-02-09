@@ -92,12 +92,12 @@ class TransfomerSearchView(APIView):
         upper_bound = release_date_bounds[1]
 
         # Filter by lower bound
-        if lower_bound:
+        if lower_bound is not None:
             lower_bound = datetime.strptime(lower_bound, '%Y-%m-%d').date()
             queryset = queryset.filter(release_date__gte=lower_bound)
         
         # Filter by upper bound
-        if upper_bound:
+        if upper_bound is not None:
             upper_bound = datetime.strptime(upper_bound, '%Y-%m-%d').date()
             queryset = queryset.filter(release_date__lte=upper_bound)
         return queryset
@@ -120,11 +120,11 @@ class TransfomerSearchView(APIView):
         upper_bound = price_filter[1]
 
         # Filter by lower bound
-        if lower_bound:
+        if lower_bound is not None:
             queryset = queryset.filter(price__gte=lower_bound)
         
         # Filter by upper bound
-        if upper_bound:
+        if upper_bound is not None:
             queryset = queryset.filter(price__lte=upper_bound)
         return queryset
 

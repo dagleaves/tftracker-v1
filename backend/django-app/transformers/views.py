@@ -3,9 +3,7 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView
 from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import Count, Max, Min
 from django.utils import timezone
-from operator import itemgetter
 from datetime import datetime
-import numpy as np
 import time
 
 from rest_framework.response import Response

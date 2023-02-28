@@ -10,6 +10,13 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CollectionListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Collection
+        fields = ['id', 'name', 'public']
+
+
 class CollectionItemSerializer(serializers.ModelSerializer):
 
     class Meta:

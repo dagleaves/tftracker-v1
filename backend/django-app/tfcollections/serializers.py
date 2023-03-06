@@ -11,10 +11,14 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 
 class CollectionListSerializer(serializers.ModelSerializer):
+    length = serializers.SerializerMethodField()
 
     class Meta:
         model = Collection
-        fields = ['id', 'name', 'public']
+        fields = ['id', 'name', 'public', 'length']
+    
+    def get_length(self, obj):
+        return obj.items.all().count()
 
 
 class CollectionItemSerializer(serializers.ModelSerializer):

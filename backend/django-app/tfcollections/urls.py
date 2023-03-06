@@ -1,8 +1,10 @@
 from django.urls import path
 
+from .views import MyCollectionsView, MyCollectionView, PublicCollectionsView, PublicCollectionView
+
 urlpatterns = [
-    # path('', TransformerListView.as_view(), name='list-view'),
-    # path('search/', TransfomerSearchView.as_view(), name='search-view'),
-    # path('get-filters/', TransformerAvailableFiltersView.as_view(), name='filters-view'),
-    # path('<pk>', TransformerDetailView.as_view(), name='detail-view'),
+    path('me/', MyCollectionsView.as_view(), name='my-collections-list'),
+    path('me/<int:pk>/', MyCollectionView.as_view(), name='my-collection'),
+    path('user/<int:pk>/', PublicCollectionsView.as_view(), name='public-collections-list'),
+    path('public/<int:pk>/', PublicCollectionView.as_view(), name='public-collection'),
 ]

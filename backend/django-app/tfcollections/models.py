@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from transformers.models import Transformer
 from users.models import UserAccount
 
@@ -23,7 +24,7 @@ class CollectionItem(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='items')
     transformer = models.ForeignKey(Transformer, on_delete=models.CASCADE)
     priority = models.PositiveIntegerField(choices=Priorities.choices, null=True, default=None)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=timezone.now)
     
     def __str__(self):
         return str(self.transformer)

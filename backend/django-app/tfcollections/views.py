@@ -6,17 +6,6 @@ from .models import Collection
 from .serializers import CollectionSerializer, CollectionListSerializer
 
 
-# class MyCollectionsView(APIView):
-#     paginator = PageNumberPagination()
-
-#     def get(self, request, format=None):
-#         queryset = self.request.user.collections.all().order_by('name')
-#         paginated_queryset = self.paginator.paginate_queryset(queryset=queryset, request=request)
-#         serializer = CollectionListSerializer(paginated_queryset, many=True)
-#         response = self.paginator.get_paginated_response(serializer.data)
-#         return response
-
-
 class MyCollectionsView(ListAPIView):
     serializer_class = CollectionListSerializer
     queryset = Collection.objects.all()

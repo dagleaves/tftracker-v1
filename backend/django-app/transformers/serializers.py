@@ -25,6 +25,13 @@ class TransformerSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'release_date', 'price', 'toyline', 'subline', 'size_class', 'manufacturer']
 
 
+class TransformerCollectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Transformer
+        fields = ['id', 'name', 'toyline', 'subline', 'size_class']
+
+
 class TransformerDetailSerializer(serializers.ModelSerializer):
     manufacturer = serializers.CharField(source='get_manufacturer_display')
 

@@ -1,17 +1,14 @@
-import React, { Fragment , useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { checkAuth } from '@/features/auth';
 
 export const AuthProvider = ({ children }) => {
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(checkAuth());
-    });
+    dispatch(checkAuth());
 
     return (
-        <Fragment>
+        <React.Fragment>
             {children}
-        </Fragment>
+        </React.Fragment>
     );
 };

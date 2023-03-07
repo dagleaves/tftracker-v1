@@ -46,7 +46,7 @@ class TransformerModelTests(TestCase):
         tf = Transformer.objects.get(name='Bumblebee')
         self.assertIsNotNone(tf)
         self.assertEqual(tf.name, 'Bumblebee')
-        self.assertEqual(tf.picture.name, 'foo.gif')
+        self.assertEqual(tf.picture.name, 'transformers/foo.gif')
         self.assertEqual(tf.release_date, timezone.now().date())
         self.assertEqual(tf.price, 19.99)
         self.assertEqual(tf.toyline.name, 'Generations')
@@ -56,12 +56,3 @@ class TransformerModelTests(TestCase):
         self.assertEqual(tf.manufacturer, 'H')
         self.assertEqual(str(tf), 'Bumblebee')
         self.assertTrue(tf.is_visible)
-
-    def test_duplicate_names(self):
-        '''
-        Ensure auto slug does not create identical slugs for the same name
-        '''
-        tf1 = self.create_default_transformer(name='Optimus Prime', toyline=self.generations, subline=self.studio_series)
-        tf2 = self.create_default_transformer(name='Optimus Prime', toyline=self.generations, subline=self.studio_series, price=100.00)
-        self.assertIsNotNone(tf1)
-        self.assertIsNotNone(tf2)

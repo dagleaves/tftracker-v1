@@ -22,7 +22,6 @@ export const TransformerDetailPage = () => {
 
 
     return (
-        <div>
         <Grid container justifyContent='center' sx={{ mt: 3 }} >
             <Grid item xs={1} sx={{ mr: 8 }} >
                 <Box 
@@ -82,11 +81,10 @@ export const TransformerDetailPage = () => {
                         </ListItemIcon>
                         <ListItemText 
                             primaryTypographyProps={{fontSize: '14px'}}
-                            primary={`Release Price: ${transformer['price']}`} />
+                            primary={`Release Price: $${transformer['price']}`} />
                     </ListItem>
                 </List>
             </Grid>
         </Grid>
-        </div>
     );
 };

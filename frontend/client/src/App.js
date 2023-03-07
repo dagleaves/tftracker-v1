@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AuthProvider } from './features/auth';
+import { SearchProvider } from './features/transformers';
 
 import { publicRoutes } from './routes';
 
@@ -25,9 +26,11 @@ function App() {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <ThemeProvider theme={darkTheme}>
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        <SearchProvider>
+          <ThemeProvider theme={darkTheme}>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </SearchProvider>
       </AuthProvider>
     </Provider>
   )

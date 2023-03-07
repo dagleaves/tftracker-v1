@@ -55,10 +55,10 @@ export const NavBar = (props) => {
   ];
 
   const guestMenu = [
-    <MenuItem component={Link} to="/register">
+    <MenuItem key='Register' component={Link} to="/register">
       <Typography>Register</Typography>
     </MenuItem>,
-    <MenuItem component={Link} to="/login">
+    <MenuItem key='Login' component={Link} to="/login">
       <Typography>Login</Typography>
     </MenuItem>
     

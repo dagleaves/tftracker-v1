@@ -48,7 +48,10 @@ INSTALLED_APPS = [
     'storages',
 
     'users',
+    'profiles',
+    'preferences',
     'transformers',
+    'tfcollections',
 ]
 
 REST_FRAMEWORK = {

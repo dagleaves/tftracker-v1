@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/transformers/', include('transformers.urls')),
+    path('api/collections/', include('tfcollections.urls')),
 ]

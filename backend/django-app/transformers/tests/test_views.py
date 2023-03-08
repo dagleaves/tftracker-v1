@@ -37,6 +37,7 @@ class TransformerListViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
@@ -115,6 +116,7 @@ class TransformerDetailViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
@@ -190,6 +192,7 @@ class TransformerSearchViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)

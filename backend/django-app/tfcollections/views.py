@@ -1,6 +1,4 @@
-from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
-from rest_framework.pagination import PageNumberPagination
 
 from .models import Collection
 from .serializers import CollectionSerializer, CollectionListSerializer

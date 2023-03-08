@@ -13,6 +13,7 @@ class CollectionModelTests(TestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.user = user_model.objects.create_user(**default_user_data)
@@ -46,6 +47,7 @@ class CollectionItemTests(TestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.user = user_model.objects.create_user(**default_user_data)

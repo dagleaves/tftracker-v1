@@ -17,12 +17,14 @@ class MyCollectionsViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.other_user_data = {
             'first_name': 'Other',
             'last_name': 'User',
             'email': 'otheruser@test.com',
+            'username': 'otheruser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
@@ -107,12 +109,14 @@ class MyCollectionViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.other_user_data = {
             'first_name': 'Other',
             'last_name': 'User',
             'email': 'otheruser@test.com',
+            'username': 'otheruser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
@@ -146,7 +150,7 @@ class MyCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Collection')
 
 
@@ -165,7 +169,7 @@ class MyCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Custom')
 
 
@@ -184,7 +188,7 @@ class MyCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Custom')
 
     
@@ -214,12 +218,14 @@ class PublicCollectionsViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.other_user_data = {
             'first_name': 'Other',
             'last_name': 'User',
             'email': 'otheruser@test.com',
+            'username': 'otheruser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
@@ -336,12 +342,14 @@ class PublicCollectionViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         cls.other_user_data = {
             'first_name': 'Other',
             'last_name': 'User',
             'email': 'otheruser@test.com',
+            'username': 'otheruser',
             'password': 'validUserGoodPass852'
         }
         cls.user = cls.user_model.objects.create_user(**cls.default_user_data)
@@ -375,7 +383,7 @@ class PublicCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Collection')
 
 
@@ -394,7 +402,7 @@ class PublicCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Custom')
 
 
@@ -407,7 +415,7 @@ class PublicCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Collection')
 
 
@@ -426,7 +434,7 @@ class PublicCollectionViewTests(APITestCase):
         response = self.client.get(url)
         results = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 6)
         self.assertEqual(results['name'], 'Custom')
 
 

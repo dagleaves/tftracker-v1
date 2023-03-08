@@ -36,6 +36,7 @@ class RegisterViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         UserAccount.objects.create_user(**cls.default_user_data)
@@ -45,6 +46,7 @@ class RegisterViewTests(APITestCase):
             'first_name': 'Test',
             'last_name': 'User',
             'email': 'testuser@test.com',
+            'username': 'testuser',
             'password': 'TestUserGoodPass852'
         }
 
@@ -62,6 +64,7 @@ class RegisterViewTests(APITestCase):
         self.assertEqual(user.first_name, self.user_data['first_name'])
         self.assertEqual(user.last_name, self.user_data['last_name'])
         self.assertEqual(user.email, self.user_data['email'])
+        self.assertEqual(user.username, self.user_data['username'])
         self.assertTrue(user.check_password(self.user_data['password']))
 
 
@@ -74,6 +77,10 @@ class RegisterViewTests(APITestCase):
         self.assertEqual(
             str(response.data['email'][0]),
             'user account with this email already exists.',
+        )
+        self.assertEqual(
+            str(response.data['username'][0]),
+            'user account with this username already exists.',
         )
         self.assertEqual(UserAccount.objects.count(), 1)
 
@@ -157,6 +164,7 @@ class LoginViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.credentials = {
@@ -279,6 +287,7 @@ class CheckAuthenticatedViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.credentials = {
@@ -319,12 +328,14 @@ class RetrieveUserViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.user_data = {
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser'
         }
         self.credentials = {
             'email': 'validuser@test.com',
@@ -358,6 +369,7 @@ class LogoutViewTests(APITestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.credentials = {

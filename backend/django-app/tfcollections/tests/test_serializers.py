@@ -14,6 +14,7 @@ class CollectionListSerializerTests(TestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.user = user_model.objects.create_user(**default_user_data)
@@ -69,6 +70,7 @@ class CollectionSerializerTests(TestCase):
             'first_name': 'Valid',
             'last_name': 'User',
             'email': 'validuser@test.com',
+            'username': 'validuser',
             'password': 'validUserGoodPass852'
         }
         self.user = user_model.objects.create_user(**default_user_data)

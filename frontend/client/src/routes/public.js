@@ -7,6 +7,24 @@ import { protectedRoutes } from './protected';
 import { Home } from '@/features/misc';
 
 
+export const getPublicRoutes = (store) => {
+    return [
+        {
+            path: "/",
+            element: <MainLayout />,
+            children: [
+                { index: true, element: <Home />},
+                ...protectedRoutes,
+                {
+                    path: "*",
+                    element: <NotFound />,
+                },
+            ],
+        },
+        ...authRoutes,
+    ];
+}
+
 export const publicRoutes = [
     {
         path: "/",

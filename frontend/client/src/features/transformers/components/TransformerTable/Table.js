@@ -110,7 +110,7 @@ export const TransformerTable = () => {
                           <TableCell align="center">${row.price}</TableCell>
                           <TableCell align="center">{row.manufacturer}</TableCell>
                           <TableCell align="center">
-                              <Button variant='contained' component={Link} to={'/transformers/' + row.id + '-' + row.name}>View</Button>
+                              <Button variant='contained' component={Link} to={'/transformer/' + row.id + '-' + row.name}>View</Button>
                           </TableCell>
                         </TableRow>
                       );

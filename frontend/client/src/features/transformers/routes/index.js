@@ -48,7 +48,7 @@ const getTransformerList = async () => {
 
 export const transformerRoutes = [
     {
-        path: "transformers/:slug",
+        path: "transformer/:slug",
         element: <TransformerDetailPage />,
         errorElement: <NotFound />,
         loader: ({ params }) => {

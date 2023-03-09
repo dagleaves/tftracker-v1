@@ -16,8 +16,6 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '@/features/auth';
 
-const pages = ['My Collections'];
-
 
 function handleProfileRequest() {
 
@@ -32,13 +30,16 @@ function handleSettingsRequest() {
 }
 
 
-export const NavBar = (props) => {
+export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.user);
+  const { isAuthenticated, user } = useSelector(state => state.user);
 
+
+  // Avatar drop-down right side of navbar
+  // If logged in
   const authMenu = [
       <MenuItem key="Profile" onClick={handleProfileRequest}>
         <Typography>Profile</Typography>
@@ -54,6 +55,7 @@ export const NavBar = (props) => {
       </MenuItem>
   ];
 
+  // If not logged in
   const guestMenu = [
     <MenuItem key='Register' component={Link} to="/register">
       <Typography>Register</Typography>
@@ -61,7 +63,24 @@ export const NavBar = (props) => {
     <MenuItem key='Login' component={Link} to="/login">
       <Typography>Login</Typography>
     </MenuItem>
-    
+  ];
+
+  // Navigation buttons on left side of navbar
+  // Logged in
+  const authPages = [
+    <Button
+      key='My Collections'
+      component={Link}
+      to={`/u/${user.username}/collections`}
+      sx={{ my: 2, color: 'white', display: 'block', textTransform: 'capitalize'}}
+    >
+      My Collections
+    </Button>
+  ];
+
+  // Not logged in
+  const guestPages = [
+
   ];
 
   const handleOpenNavMenu = (event) => {
@@ -131,11 +150,7 @@ export const NavBar = (props) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              {isAuthenticated ? authPages : guestPages}
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -157,13 +172,7 @@ export const NavBar = (props) => {
             TFTracker
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button
-                key='My Collections'
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block', textTransform: 'capitalize'}}
-              >
-                My Collections
-              </Button>
+            {user ? authPages : guestPages}
           </Box>
 
           <Box sx={{ flexGrow: 0, mr: 1 }}>
